@@ -1,0 +1,6 @@
+@Sorveteria_HostAddress = http://localhost:5225
+
+GET {{Sorveteria_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
