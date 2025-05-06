@@ -25,7 +25,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Aqui você vai colocar os endpoints reais depois
-// Ex: app.MapGet("/sorvetes", ...);
+// ✅ REGISTRO DOS ENDPOINTS AQUI
+app.MapSorveteEndpoints();
+app.MapCupomEndpoints();
+app.MapPedidoEndpoints();
 
 app.Run();
