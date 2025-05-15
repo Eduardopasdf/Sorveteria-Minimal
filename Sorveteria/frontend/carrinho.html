@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Carrinho - Sovitha Sorveteria</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header>
+        <h1>Carrinho de Compras</h1>
+        <nav>
+            <a href="index.html">Início</a> |
+            <a href="cadastro.html">Cadastrar Produto</a> |
+            <a href="admin.html">Administração</a> |
+            <a href="pedidos.html">Meus Pedidos</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Itens no Carrinho</h2>
+            <div id="itensCarrinho"></div>
+            <p>Total: R$ <span id="total">0.00</span></p>
+            <br /><br />
+            <button onclick="finalizarPedido()">Finalizar Pedido</button>
+            <pre id="etiqueta"></pre>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

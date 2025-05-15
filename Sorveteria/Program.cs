@@ -7,6 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=sorveteria.db"));
 
+// Configurar CORS para permitir requisições do frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -25,9 +36,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Usar CORS
+app.UseCors("AllowAll");
+
 // ✅ REGISTRO DOS ENDPOINTS AQUI
 app.MapSorveteEndpoints();
-app.MapCupomEndpoints();
+// app.MapCupomEndpoints(); // Removido pois cupom foi excluído
 app.MapPedidoEndpoints();
 
 app.Run();

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Administração - Sovitha Sorveteria</title>
+    <link rel="stylesheet" href="../frontend/style.css" />
+</head>
+<body>
+    <header>
+        <h1>Administração - Sovitha Sorveteria</h1>
+        <nav>
+            <a href="../frontend/index.html">Início</a> |
+            <a href="../frontend/cadastro.html">Cadastrar Produto</a> |
+            <a href="../frontend/carrinho.html">Carrinho</a> |
+            <a href="../frontend/pedidos.html">Meus Pedidos</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Produtos Cadastrados</h2>
+            <div id="produtos"></div>
+        </section>
+        <section>
+            <h2>Adicionar Novo Produto</h2>
+            <form id="formAdicionar">
+                <input type="text" id="nome" placeholder="Nome" required /><br />
+                <input type="text" id="descricao" placeholder="Descrição" required /><br />
+                <input type="number" id="preco" placeholder="Preço" step="0.01" required /><br />
+                <label for="imagem">Imagem (opcional):</label><br />
+                <input type="file" id="imagem" accept="image/*" /><br />
+                <button type="submit">Adicionar Produto</button>
+            </form>
+            <p id="mensagem"></p>
+        </section>
+        <section>
+            <h2>Gerenciar Cupons</h2>
+            <form id="formCupom">
+                <input type="text" id="codigoCupom" placeholder="Código do Cupom" required />
+                <input type="number" id="valorCupom" placeholder="Valor do Desconto" step="0.01" required />
+                <button type="submit">Adicionar Cupom (válido por 1 min)</button>
+            </form>
+            <p id="mensagemCupom"></p>
+            <div id="listaCupons"></div>
+        </section>
+    </main>
+    <script src="../frontend/script.js"></script>
+</body>
+</html>

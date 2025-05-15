@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Cadastro de Produto - Sovitha Sorveteria</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header>
+        <h1>Cadastrar Novo Produto 🍧</h1>
+        <nav>
+            <a href="index.html">Início</a> |
+            <a href="carrinho.html">Carrinho 🛒</a> |
+            <a href="admin.html">Administração</a>
+        </nav>
+    </header>
+    <main>
+        <form id="formCadastro" enctype="multipart/form-data">
+            <input type="text" id="nome" placeholder="Nome" required /><br />
+            <input type="text" id="descricao" placeholder="Descrição" required /><br />
+            <input type="number" id="preco" placeholder="Preço" step="0.01" required /><br />
+            <label for="imagem">Imagem (opcional):</label><br />
+            <input type="file" id="imagem" accept="image/*" /><br />
+            <button type="submit">Cadastrar</button>
+        </form>
+        <p id="mensagem"></p>
+    </main>
+    <script>
+        document.getElementById('formCadastro').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const descricao = document.getElementById('descricao').value;
+            const preco = parseFloat(document.getElementById('preco').value);
+            const imagemInput = document.getElementById('imagem');
+            let imagemUrl = '';
+
+            if (imagemInput.files.length > 0) {
+                const file = imagemInput.files[0];
+                // Simular upload local convertendo para base64 (para simplificar)
+                imagemUrl = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            const produto = { nome, descricao, preco, imagemUrl };
+
+            try {
+                const response = await fetch('http://localhost:5225/sorvetes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(produto)
+                });
+
+                if (response.ok) {
+                    document.getElementById('mensagem').textContent = "Produto cadastrado com sucesso!";
+                    e.target.reset();
+                } else {
+                    const error = await response.text();
+                    document.getElementById('mensagem').textContent = "Erro: " + error;
+                }
+            } catch (error) {
+                document.getElementById('mensagem').textContent = "Erro ao cadastrar: " + error;
+            }
+        });
+    </script>
+</body>
+</html>

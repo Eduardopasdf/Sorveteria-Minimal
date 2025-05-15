@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Administração - Sovitha Sorveteria</title>
+    <link rel="stylesheet" href="style.css" />
+    <script>
+        // Proteção simples via prompt de senha para acesso à página administrativa
+        (function() {
+            const senha = prompt("Digite a senha para acessar a administração:");
+            if (senha !== "sovitha123") {
+                alert("Senha incorreta. Acesso negado.");
+                window.location.href = "index.html";
+            }
+        })();
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Administração - Sovitha Sorveteria</h1>
+        <nav>
+            <a href="index.html">Início</a> |
+            <a href="cadastro.html">Cadastrar Produto</a> |
+            <a href="carrinho.html">Carrinho</a> |
+            <a href="pedidos.html">Meus Pedidos</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Produtos Cadastrados</h2>
+            <div id="produtos"></div>
+        </section>
+        <section>
+            <h2>Adicionar Novo Produto</h2>
+            <form id="formAdicionar">
+                <input type="text" id="nome" placeholder="Nome" required /><br />
+                <input type="text" id="descricao" placeholder="Descrição" required /><br />
+                <input type="number" id="preco" placeholder="Preço" step="0.01" required /><br />
+                <label for="imagem">Imagem (opcional):</label><br />
+                <input type="file" id="imagem" accept="image/*" /><br />
+                <button type="submit">Adicionar Produto</button>
+            </form>
+            <p id="mensagem"></p>
+        </section>
+        <section>
+            <h2>Gerenciar Cupons</h2>
+            <form id="formCupom">
+                <input type="text" id="codigoCupom" placeholder="Código do Cupom" required />
+                <input type="number" id="valorCupom" placeholder="Valor do Desconto" step="0.01" required />
+                <button type="submit">Adicionar Cupom</button>
+            </form>
+            <p id="mensagemCupom"></p>
+            <div id="listaCupons"></div>
+        </section>
+    </main>
+    <script>
+        async function carregarProdutos() {
+            try {
+                const res = await fetch('http://localhost:5225/sorvetes');
+                if (!res.ok) throw new Error('Erro ao carregar produtos');
+                const produtos = await res.json();
+                const container = document.getElementById('produtos');
+                container.innerHTML = '';
+                if (produtos.length === 0) {
+                    container.innerHTML = '<p>Nenhum produto cadastrado.</p>';
+                    return;
+                }
+                produtos.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    if (p.imagemUrl) {
+                        div.innerHTML = `
+                            <img src="${p.imagemUrl}" alt="${p.nome}" width="150" />
+                            <h3>${p.nome}</h3>
+                            <p>${p.descricao}</p>
+                            <strong>R$ ${p.preco.toFixed(2)}</strong><br />
+                            <button onclick="editarProduto(${p.id})">Editar</button>
+                            <button onclick="deletarProduto(${p.id})">Deletar</button>
+                        `;
+                    } else {
+                        div.innerHTML = `
+                            <div class="placeholder-image">Sem Imagem</div>
+                            <h3>${p.nome}</h3>
+                            <p>${p.descricao}</p>
+                            <strong>R$ ${p.preco.toFixed(2)}</strong><br />
+                            <button onclick="editarProduto(${p.id})">Editar</button>
+                            <button onclick="deletarProduto(${p.id})">Deletar</button>
+                        `;
+                    }
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                document.getElementById('produtos').innerHTML = '<p>' + err.message + '</p>';
+            }
+        }
+
+        document.getElementById('formAdicionar').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const descricao = document.getElementById('descricao').value;
+            const preco = parseFloat(document.getElementById('preco').value);
+            const imagemInput = document.getElementById('imagem');
+            let imagemUrl = '';
+
+            if (imagemInput.files.length > 0) {
+                const file = imagemInput.files[0];
+                imagemUrl = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            const produto = { nome, descricao, preco, imagemUrl };
+
+            try {
+                const res = await fetch('http://localhost:5225/sorvetes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(produto)
+                });
+                if (!res.ok) throw new Error('Erro ao adicionar produto');
+                document.getElementById('mensagem').textContent = 'Produto adicionado com sucesso!';
+                e.target.reset();
+                carregarProdutos();
+            } catch (err) {
+                document.getElementById('mensagem').textContent = err.message;
+            }
+        });
+
+        async function editarProduto(id) {
+            const nome = prompt('Novo nome:');
+            if (nome === null) return;
+            const descricao = prompt('Nova descrição:');
+            if (descricao === null) return;
+            const precoStr = prompt('Novo preço:');
+            if (precoStr === null) return;
+            const preco = parseFloat(precoStr);
+            if (isNaN(preco)) {
+                alert('Preço inválido');
+                return;
+            }
+            const imagemUrl = prompt('Nova URL da imagem (deixe vazio para manter):');
+            if (imagemUrl === null) return;
+
+            const produto = { nome, descricao, preco };
+            if (imagemUrl.trim() !== '') {
+                produto.imagemUrl = imagemUrl;
+            }
+
+            try {
+                const res = await fetch(`http://localhost:5225/sorvetes/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(produto)
+                });
+                if (!res.ok) throw new Error('Erro ao editar produto');
+                alert('Produto editado com sucesso!');
+                carregarProdutos();
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        async function deletarProduto(id) {
+            if (!confirm('Confirma exclusão do produto?')) return;
+            try {
+                const res = await fetch(`http://localhost:5225/sorvetes/${id}`, {
+                    method: 'DELETE'
+                });
+                if (!res.ok) throw new Error('Erro ao deletar produto');
+                alert('Produto deletado com sucesso!');
+                carregarProdutos();
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        // Funções para gerenciar cupons
+        async function carregarCupons() {
+            try {
+                const res = await fetch('http://localhost:5225/cupons');
+                if (!res.ok) throw new Error('Erro ao carregar cupons');
+                const cupons = await res.json();
+                const container = document.getElementById('listaCupons');
+                container.innerHTML = '';
+                if (cupons.length === 0) {
+                    container.innerHTML = '<p>Nenhum cupom cadastrado.</p>';
+                    return;
+                }
+                cupons.forEach(c => {
+                    const div = document.createElement('div');
+                    div.textContent = `Código: ${c.codigo} - Valor: R$ ${c.valor.toFixed(2)}`;
+                    const btnExcluir = document.createElement('button');
+                    btnExcluir.textContent = 'Excluir';
+                    btnExcluir.onclick = () => deletarCupom(c.id);
+                    div.appendChild(btnExcluir);
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                document.getElementById('listaCupons').innerHTML = '<p>' + err.message + '</p>';
+            }
+        }
+
+        document.getElementById('formCupom').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const codigo = document.getElementById('codigoCupom').value;
+            const valor = parseFloat(document.getElementById('valorCupom').value);
+            if (!codigo || isNaN(valor) || valor <= 0) {
+                document.getElementById('mensagemCupom').textContent = 'Código e valor válidos são obrigatórios.';
+                return;
+            }
+            // Removida a duração de 1 minuto para o cupom
+            const cupom = { codigo, valor };
+            try {
+                const res = await fetch('http://localhost:5225/cupons', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cupom)
+                });
+                if (!res.ok) throw new Error('Erro ao adicionar cupom');
+                document.getElementById('mensagemCupom').textContent = 'Cupom adicionado com sucesso!';
+                e.target.reset();
+                carregarCupons();
+            } catch (err) {
+                document.getElementById('mensagemCupom').textContent = err.message;
+            }
+        });
+
+        async function deletarCupom(id) {
+            if (!confirm('Confirma exclusão do cupom?')) return;
+            try {
+                const res = await fetch(`http://localhost:5225/cupons/${id}`, {
+                    method: 'DELETE'
+                });
+                if (!res.ok) throw new Error('Erro ao deletar cupom');
+                carregarCupons();
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        carregarProdutos();
+        carregarCupons();
+    </script>
+</body>
+</html>
+</create_file>

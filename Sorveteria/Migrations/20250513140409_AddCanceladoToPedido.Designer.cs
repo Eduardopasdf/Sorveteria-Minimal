@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Sorveteria.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250513140409_AddCanceladoToPedido")]
+    partial class AddCanceladoToPedido
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.4");
@@ -56,8 +59,6 @@ namespace Sorveteria.Migrations
 
                     b.HasIndex("PedidoId");
 
-                    b.HasIndex("SorveteId");
-
                     b.ToTable("ItensPedido");
                 });
 
@@ -68,11 +69,7 @@ namespace Sorveteria.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("Cancelado")
-                        .HasColumnType("INTEGER")
-                        .HasAnnotation("Relational:JsonPropertyName", "cancelado");
-
-                    b.Property<DateTime>("DataHora")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("MetodoPagamento")
                         .IsRequired()
@@ -121,14 +118,6 @@ namespace Sorveteria.Migrations
                     b.HasOne("Pedido", null)
                         .WithMany("Itens")
                         .HasForeignKey("PedidoId");
-
-                    b.HasOne("Sorvete", "Sorvete")
-                        .WithMany()
-                        .HasForeignKey("SorveteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sorvete");
                 });
 
             modelBuilder.Entity("Pedido", b =>
