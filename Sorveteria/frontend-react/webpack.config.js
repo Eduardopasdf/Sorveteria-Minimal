@@ -14,7 +14,7 @@ module.exports = {
     static: './dist',
     historyApiFallback: true,
     port: 3000,
-    open: true,
+    open: ['default'],
   },
   module: {
     rules: [
