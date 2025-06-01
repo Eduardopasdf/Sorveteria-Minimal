@@ -38,10 +38,40 @@ Este projeto consiste em uma Minimal API desenvolvida em C# utilizando o padrão
    ```
 4. O front-end estará disponível em `http://localhost:3000`.
 
+## Endpoints da API
+
+### Pedidos
+- GET /pedidos - Lista todos os pedidos
+- POST /pedidos - Cria um novo pedido
+- DELETE /pedidos/{id} - Remove um pedido específico
+- PATCH /pedidos/{id}/cancelar - Cancela um pedido
+
+## Estrutura do Banco de Dados
+- Pedidos (Orders)
+  - Id
+  - Total
+  - MetodoPagamento
+  - QRCodeUrl
+  - Cancelado
+  - DataHora
+- Sorvetes (Ice Creams)
+  - Id
+  - Nome
+  - Descricao
+  - Preco
+  - ImagemUrl
+- ItemPedido (Order Items)
+  - Id
+  - PedidoId
+  - SorveteId
+  - Quantidade
+
 ## Informações Adicionais
-- O projeto utiliza CORS para permitir comunicação entre front-end e back-end.
-- A API possui endpoints para gerenciamento de pedidos, incluindo criação, listagem, cancelamento e exclusão.
-- O versionamento do código deve ser feito via Git, com commits regulares conforme critérios do professor.
+- O projeto utiliza CORS para permitir comunicação entre front-end e back-end
+- A API possui endpoints para gerenciamento de pedidos, incluindo criação, listagem, cancelamento e exclusão
+- O versionamento do código é feito via Git, com commits regulares conforme critérios do professor
+- Implementação completa de tratamento de erros
+- Documentação via Swagger UI disponível em desenvolvimento
 
 ---
 Este projeto foi desenvolvido como parte da disciplina de Tópicos Especiais, com foco em boas práticas de desenvolvimento.

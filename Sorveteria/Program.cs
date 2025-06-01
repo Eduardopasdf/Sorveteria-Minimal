@@ -36,6 +36,21 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Tratamento global de erros
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(new
+        {
+            StatusCode = 500,
+            Message = "Ocorreu um erro inesperado no servidor"
+        });
+    });
+});
+
 // Usar CORS
 app.UseCors("AllowAll");
 

@@ -1,7 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 
+/// <summary>
+/// Classe responsável por mapear todos os endpoints relacionados a pedidos
+/// </summary>
 public static class PedidoEndpoints
 {
+    /// <summary>
+    /// Configura todos os endpoints relacionados a gestão de pedidos na aplicação
+    /// </summary>
+    /// <param name="app">A instância da aplicação web</param>
     public static void MapPedidoEndpoints(this WebApplication app)
     {
         app.MapGet("/pedidos", async (AppDbContext db) =>
